@@ -1,0 +1,11 @@
+[
+    {"input": "I am a teacher", "output": "Education"},
+    {"input": "teaching the classroom maths", "output": "Education"},
+    {"input": "I give knowledge to younger children in a classroom", "output": "Education"},
+    {"input": "I am a builder that creates tall structures", "output": "Construction"},
+    {"input": "A carpenter makes furnature out of wood", "output": "Construction"},
+    {"input": "All electrical works must be done by an electrician on the construction site", "output": "Construction"},
+    {"input": "I am a manager of a Subway in Eastwood", "output": "Management"},
+    {"input": "The management team would like to invite you to the Christmans lunch", "output": "Management"},
+    {"input": "To manage is to lead by example and demonstrate to your workers how to do their job", "output": "Management"}
+]

@@ -1,0 +1,18 @@
+{
+  "name": "nlp-classifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel serve ./src/index.html",
+    "build": "parcel build ./src/index.html"
+  },
+  "author": "James Hill",
+  "license": "ISC",
+  "dependencies": {
+    "brain.js": "*"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0-beta.3.1"
+  }
+}
