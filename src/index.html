@@ -4,18 +4,35 @@
     </head>
     <body>
         <h1>MLP Text Classifier</h1>
-        <h2>Create/Load/Export</h2>
-        <button id="createModel">Create Neural Network</button><br/><br/>
+        <h2>Create/Load</h2>
+        <label for="createModel">Create Neural Network: </label>
+        <button id="createModel">Create</button><br/><br/>
         <!-- <button id="loadModel">Load Neural Network</button> -->
+        <label for="loadModel">Load Neural Network: </label>
         <input type='file' id="loadModel"><br/><br/>
-        <button id="exportModel">Export Neural Network</button>
 
         
-        <h2>Train/Classify</h2>
-        <button id="trainModel">Train from CSV</button>
-        <button id="classifyString">Classify CSV</button>
+        <h2>Train</h2>
+        <label for="trainModel">Train from CSV: </label>
+        <input type='file' id="trainModel"><br/><br/>
+        <b>Training Options:</b><br/>
+        <label for="option_itterations">Itterations:</label><input id="option_itterations" type="number" min="1" step="10" value="300"><br/>
+        <label for="option_errorThreshold">Error Threshold:</label><input id="option_errorThreshold" type="number" min="0" max="1" step="0.001" value="0.005"><br/>
+        <label for="option_log">Log:</label><input id="option_log" type="checkbox" checked><br/>
+        <label for="option_logPeriod">Log Period:</label><input id="option_logPeriod" type="number" min="1" value="10"><br/>
+        <label for="option_learningRate">Learning Rate:</label><input id="option_learningRate" type="number" min="0" max="1" step="0.05" value="0.3"><br/>
+        <label for="option_momentum">Momentum:</label><input id="option_momentum" type="number" min="0" max="1" step="0.05" value="0.1"><br/>
+        <label for="option_timeout">Timeout (ms):</label><input id="option_timeout" type="number" value="0" step="1000"><br/>
 
-        <script src='./funcs.js'></script>
-        <!-- <script src='./main.js'></script> -->
+        <h2>Classify</h2>
+        <label for="classifyCSV">Classify from CSV: </label>
+        <input type='file' id="classifyCSV"><br/><br/>
+        <input type='text' id="classifyStringInput"><button id="classifyStringBtn">Classify input</button>
+
+        <h2>Export</h2>
+        <label for="exportModel">Export Neural Network: </label>
+        <button id="exportModel">Export</button>
+
+        <script src='./main.js'></script>
     </body>
 </html>
