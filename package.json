@@ -2,10 +2,10 @@
   "name": "nlp-classifier",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "browser": "./dist/browser/index.html",
   "scripts": {
     "start": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html"
+    "build": "parcel build ./src/index.html --target browser"
   },
   "author": "James Hill",
   "license": "ISC",
