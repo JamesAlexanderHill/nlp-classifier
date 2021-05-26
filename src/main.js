@@ -1,12 +1,7 @@
-// import brainjs from 'brain.js/src';
-// import Papa from 'papaparse';
-// import {stemmer} from 'stemmer';
+import Papa from 'papaparse';
 import TextClassifier from './nlp';
 
-let NN = null;
-// let dictionary = [];
-// let blacklist = [];
-// let trainingHistory = [];
+let nlp = null;
 
 document.addEventListener("DOMContentLoaded", function(){
     document.getElementById('createModel').addEventListener('click', () => createModel());
@@ -21,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const createModel = () => {
-    NN = new TextClassifier(null, [], [], []);
+    nlp = new TextClassifier(null, [], [], []);
 }
 function loadModel() {
     const fileList = this.files;
@@ -41,47 +36,51 @@ function loadModel() {
             return;
         }
         console.log("LOADING NEURAL NETWORK...");
-        NN = new TextClassifier(NN, dictionary, blacklist, history);
+        nlp = new TextClassifier(NN, dictionary, blacklist, history);
         // toast.push({type: "alert", message: "File Loaded! Start classifying!"});
         console.log("NEURAL NETWORK LOADED")
     };
+    reader.readAsText(fileList[0]);
 }
-    
-    
-
 function trainModel(){
-
+    const fileList = this.files;
+    if(fileList.length < 1){
+        // toast.push({type: "error", message: "You need to import a CSV file with headers [inputs, outputs]"});
+        console.log("ERROR: You need to import a CSV file with headers [inputs, outputs]")
+        document.getElementById("trainModel").value = '';
+        return;
+    }
+    Papa.parse(this.files[0], {
+        header: true,
+        complete: (results) => {
+            nlp.train(results.data, getOptions());
+        }
+    });
 }
 function classifyCSV(){
 }
 const classifyInput = () => {
 }
 const exportModel = () => {
+    //TODO: export model
 }
 
 // Utility Functions
-const addToDictionary = (trainingData) => {
-    const inputs = trainingData.map(row => row.input.split(' ')).flat(1);
-    const stems = inputs.map(input => stemmer(input));
-    const uniqueStems = [...new Set(stems)];
-    const nondupes = uniqueStems.filter(stem => {
-        if(dictionary.includes(stem)){
-            return false;
-        }
-        return true;
-    });
-    dictionary = dictionary.concat(nondupes);
-    console.log("dictionary", dictionary);
-}
-const encodeInput = (input) => {
-    const phraseTokens = input.split(' ')
-    const encodedPhrase = dictionary.map(word => phraseTokens.includes(word) ? 1 : 0)
-
-    return encodedPhrase
+const getOptions = () => {
+    const obj = {
+        iterations: parseInt(document.getElementById('option_itterations').value),
+        errorThresh: parseFloat(document.getElementById('option_errorThreshold').value),
+        log: document.getElementById('option_log').checked,
+        logPeriod: parseInt(document.getElementById('option_logPeriod').value),
+        learningRate: parseFloat(document.getElementById('option_learningRate').value),
+        momentum: parseFloat(document.getElementById('option_momentum').value),
+        timeout: parseInt(document.getElementById('option_timeout').value),
+    };
+    return obj;
 }
 const classifyString = (string) => {
     if(NN == null){
-        console.log("ERROR: You need to create or load a Neural Network before you can classify a string")
+        console.log("ERROR: You need to create or load a Neural Network before you can classify a string");
         return;
     }
     // console.log("CLASSIFYING STRING...");

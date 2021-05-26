@@ -2017,65 +2017,249 @@
     }
   },
   "dictionary": [
-    "i",
-    "am",
-    "a",
-    "teacher",
-    "teach",
-    "the",
-    "classroom",
-    "math",
-    "give",
-    "knowledg",
-    "to",
-    "younger",
-    "children",
-    "in",
-    "builder",
-    "that",
-    "creat",
-    "tall",
-    "structur",
-    "carpent",
-    "make",
-    "furnatur",
-    "out",
-    "of",
-    "wood",
-    "all",
-    "electr",
-    "work",
-    "must",
-    "be",
-    "done",
-    "by",
-    "an",
-    "electrician",
-    "on",
-    "construct",
-    "site",
-    "manag",
-    "subwai",
-    "eastwood",
-    "team",
-    "would",
-    "like",
-    "invit",
-    "you",
-    "christman",
-    "lunch",
-    "is",
-    "lead",
-    "exampl",
-    "and",
-    "demonstr",
-    "your",
-    "worker",
-    "how",
-    "do",
-    "their",
-    "job"
-  ],
-  "blacklist": [],
-  "history": []
+    {
+        "stem": "to",
+        "count": 7
+    },
+    {
+        "stem": "a",
+        "count": 6
+    },
+    {
+        "stem": "i",
+        "count": 4
+    },
+    {
+        "stem": "the",
+        "count": 4
+    },
+    {
+        "stem": "am",
+        "count": 3
+    },
+    {
+        "stem": "manag",
+        "count": 3
+    },
+    {
+        "stem": "classroom",
+        "count": 2
+    },
+    {
+        "stem": "in",
+        "count": 2
+    },
+    {
+        "stem": "of",
+        "count": 2
+    },
+    {
+        "stem": "by",
+        "count": 2
+    },
+    {
+        "stem": "teacher",
+        "count": 1
+    },
+    {
+        "stem": "teach",
+        "count": 1
+    },
+    {
+        "stem": "math",
+        "count": 1
+    },
+    {
+        "stem": "give",
+        "count": 1
+    },
+    {
+        "stem": "knowledg",
+        "count": 1
+    },
+    {
+        "stem": "younger",
+        "count": 1
+    },
+    {
+        "stem": "children",
+        "count": 1
+    },
+    {
+        "stem": "builder",
+        "count": 1
+    },
+    {
+        "stem": "that",
+        "count": 1
+    },
+    {
+        "stem": "creat",
+        "count": 1
+    },
+    {
+        "stem": "tall",
+        "count": 1
+    },
+    {
+        "stem": "structur",
+        "count": 1
+    },
+    {
+        "stem": "carpent",
+        "count": 1
+    },
+    {
+        "stem": "make",
+        "count": 1
+    },
+    {
+        "stem": "furnatur",
+        "count": 1
+    },
+    {
+        "stem": "out",
+        "count": 1
+    },
+    {
+        "stem": "wood",
+        "count": 1
+    },
+    {
+        "stem": "all",
+        "count": 1
+    },
+    {
+        "stem": "electr",
+        "count": 1
+    },
+    {
+        "stem": "work",
+        "count": 1
+    },
+    {
+        "stem": "must",
+        "count": 1
+    },
+    {
+        "stem": "be",
+        "count": 1
+    },
+    {
+        "stem": "done",
+        "count": 1
+    },
+    {
+        "stem": "an",
+        "count": 1
+    },
+    {
+        "stem": "electrician",
+        "count": 1
+    },
+    {
+        "stem": "on",
+        "count": 1
+    },
+    {
+        "stem": "construct",
+        "count": 1
+    },
+    {
+        "stem": "site",
+        "count": 1
+    },
+    {
+        "stem": "subwai",
+        "count": 1
+    },
+    {
+        "stem": "eastwood",
+        "count": 1
+    },
+    {
+        "stem": "team",
+        "count": 1
+    },
+    {
+        "stem": "would",
+        "count": 1
+    },
+    {
+        "stem": "like",
+        "count": 1
+    },
+    {
+        "stem": "invit",
+        "count": 1
+    },
+    {
+        "stem": "you",
+        "count": 1
+    },
+    {
+        "stem": "christman",
+        "count": 1
+    },
+    {
+        "stem": "lunch",
+        "count": 1
+    },
+    {
+        "stem": "is",
+        "count": 1
+    },
+    {
+        "stem": "lead",
+        "count": 1
+    },
+    {
+        "stem": "exampl",
+        "count": 1
+    },
+    {
+        "stem": "and",
+        "count": 1
+    },
+    {
+        "stem": "demonstr",
+        "count": 1
+    },
+    {
+        "stem": "your",
+        "count": 1
+    },
+    {
+        "stem": "worker",
+        "count": 1
+    },
+    {
+        "stem": "how",
+        "count": 1
+    },
+    {
+        "stem": "do",
+        "count": 1
+    },
+    {
+        "stem": "their",
+        "count": 1
+    },
+    {
+        "stem": "job",
+        "count": 1
+    }
+],
+  "blacklist": ["i", "string"],
+  "history": [
+    {"input": "I am a teacher", "output": "Education"},
+    {"input": "teaching the classroom maths", "output": "Education"},
+    {"input": "I give knowledge to younger children in a classroom", "output": "Education"},
+    {"input": "I am a builder that creates tall structures", "output": "Construction"},
+    {"input": "A carpenter makes furnature out of wood", "output": "Construction"},
+    {"input": "All electrical works must be done by an electrician on the construction site", "output": "Construction"},
+    {"input": "I am a manager of a Subway in Eastwood", "output": "Management"},
+    {"input": "The management team would like to invite you to the Christmans lunch", "output": "Management"},
+    {"input": "To manage is to lead by example and demonstrate to your workers how to do their job", "output": "Management"}
+  ]
 }

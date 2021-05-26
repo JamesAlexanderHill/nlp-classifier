@@ -1,6 +1,11 @@
 import brainjs from 'brain.js/src';
+import { stemmer } from 'stemmer';
 
 export default class TextClassifier {
+    #brain;
+    #dictionary;
+    #blacklist;
+    #history;
     /**
      * Creates a new NLP - TextClassifier
      * @constructor
@@ -10,10 +15,13 @@ export default class TextClassifier {
      * @param {Array} history - An array of objects including inputs and outputs that the Neural Network has already trained on.
      */
     constructor(brain, dictionary, blacklist, history) {
-        this.NeuralNetwork = new brain.NeuralNetwork();
-        this.dictionary = dictionary;
-        this.blacklist = blacklist;
-        this.history = history;
+        this.#brain = new brainjs.NeuralNetwork();
+        if(brain){
+            this.#brain.fromJSON(brain);
+        }
+        this.#dictionary = dictionary;
+        this.#blacklist = blacklist;
+        this.#history = history;
     }
 
     /**
@@ -21,24 +29,45 @@ export default class TextClassifier {
      * @method
      * @returns The current dictionary
      */
-    get getDictionary(){
-        return this.dictionary;
+    get modelDictionary(){
+        return this.#dictionary;
+    }
+    /**
+     * Sets the current dictionary of the NLP - TextClassifier
+     * @method
+     */
+    set #modelDictionary(dictionary){
+        this.#dictionary = dictionary;
     }
     /**
      * Get the current blacklist of the NLP - TextClassifier
      * @method
      * @returns The current blacklist
      */
-    get getBlacklist(){
-        return this.blacklist;
+    get dictionaryBlacklist(){
+        return this.#blacklist;
+    }
+    /**
+     * Sets the current blacklist of the NLP - TextClassifier
+     * @method
+     */
+    set #dictionaryBlacklist(blacklist){
+        this.#blacklist = blacklist;
     }
     /**
      * Get the historical training data of the NLP - TextClassifier
      * @method
      * @returns The historical training data
      */
-    get getHistory(){
-        return this.history;
+    get trainingHistory(){
+        return this.#history;
+    }
+    /**
+     * Sets the historical training data of the NLP - TextClassifier
+     * @method
+     */
+    set #trainingHistory(history){
+        this.#history = history;
     }
 
     /**
@@ -61,7 +90,100 @@ export default class TextClassifier {
      * }
      */
     train(trainingData, options){
-        //add new training data to history (overwrite any duplicate inputs with new outputs)
+        console.log(trainingData, options);
+        // add new training data to history (overwrite any duplicate inputs with new outputs)
+        this.#addHistory(trainingData);
+        // create dictionary from history
+        this.#createDictionary();
+        // train
+        this.#brain.train(this.#prepareTrainingData(trainingData), this.#cleanOptions(options));
     }
 
+    /**
+     * Add new history to the current history by updating any pre-existing inputs with their new output and removing duplicates
+     * @method
+     * @param {Array} newData - An array of objects containing input strings and output category
+     */
+    #addHistory(newData) {
+        const index = {};
+        this.trainingHistory.concat(newData).forEach(item => index[item.input] = item);
+        this.#trainingHistory = Object.values(index);
+    }
+
+    /**
+     * Creates a new dictionary from the current stored training data.
+     * This will stem, remove blacklisted words and sort the dictionary
+     * @method
+     * @todo add dictionary trimming (limit length to 500 words ect)
+     */
+    #createDictionary(){
+        // const words = [].concat.apply([], this.trainingHistory.map(history => history.input.split(' ')));
+        const words = this.trainingHistory.map(history => history.input.split(' ')).flat();
+        console.log("Words", words);
+        const stems = words.map(word => stemmer(word));
+        console.log("Stems", stems);
+        const blacklistArr = this.dictionaryBlacklist
+        const filteredStems = stems.filter(stem => {
+            if(blacklistArr.indexOf(stem) == -1){
+                return true;
+            }
+            return false;
+        });
+        console.log("Filtered", filteredStems);
+        //convert to an array of objects eg. [{stem: "am", count: 3}, {stem: "test", count: 2}, ...]
+        const countedStems = filteredStems.reduce((arr, item) => {
+            const index = arr.findIndex((element) => {
+                if(item == element.stem){return true}
+                return false;
+            });
+            if(index == -1){//new
+                arr.push({stem: item, count: 1});
+            }else{//increment
+                arr[index].count++;
+            }
+            return arr;
+        }, []);
+        countedStems.sort((a,b) => {
+            if(a.count < b.count){return 1}
+            if(a.count > b.count){return -1}
+            return 0;
+        })
+        console.log("Counted", countedStems);
+
+        // const trimmedStems;
+
+        this.#modelDictionary =  countedStems;
+    }
+
+    #prepareTrainingData(raw){
+        const preparedData = raw.map(data => {
+            const obj = {};
+            obj[data.output] = 1;
+            return {input: this.#encodeInput(data.input), output: obj}
+        })
+        return preparedData;
+    }
+
+    #encodeInput(input){
+        const phraseTokens = input.split(' ').map(word => stemmer(word))
+        const encodedPhrase = this.modelDictionary.map(word => phraseTokens.includes(word.stem) ? 1 : 0)
+        return encodedPhrase
+    }
+
+    #cleanOptions(options){
+        const cleaned = {
+            iterations: this.#clamp(options.iterations, 1, Infinity),
+            errorThresh: this.#clamp(options.errorThresh, 0, 1),
+            log: options.log,
+            logPeriod: this.#clamp(options.logPeriod, 1, Infinity),
+            learningRate: this.#clamp(options.learningRate, 0, 1),
+            momentum: this.#clamp(options.momentum, 0, 1),
+            timeout: this.#clamp(options.timeout, 0, Infinity) == 0 ? Infinity : this.#clamp(options.timeout, 0, Infinity),
+        };
+        return cleaned;
+    }
+
+    #clamp(val, min, max) {
+        return Math.min(Math.max(val, min), max);
+    }
 }
