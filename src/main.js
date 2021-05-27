@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const createModel = () => {
+    console.log("CREATING NEURAL NETWORK...")
     nlp = new TextClassifier(null, [], [], []);
+    console.log("NEURAL NETWORK CREATED")
 }
 function loadModel() {
     const fileList = this.files;
@@ -53,7 +55,9 @@ function trainModel(){
     Papa.parse(this.files[0], {
         header: true,
         complete: (results) => {
+            console.log("TRAINING MODEL...")
             nlp.train(results.data, getOptions());
+            console.log("TRAINED MODEL")
         }
     });
 }
@@ -62,7 +66,23 @@ function classifyCSV(){
 const classifyInput = () => {
 }
 const exportModel = () => {
-    //TODO: export model
+    if(nlp == null){
+        // toast.push({type: "error", message: "You need to create or load a Neural Network before you can export it"});
+        console.log("ERROR: You need to create or load a Neural Network before you can export it")
+        return;
+    }
+    console.log("EXPORTING NEURAL NETWORK...");
+    const date = new Date();
+    const name = `model_${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}_${date.getHours()}-${date.getMinutes()}.json`;
+    const json = nlp.export();
+    //export as a file
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(json, null, 2)], {type: "application/json"}));
+    a.setAttribute("download", name);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    console.log("EXPORTED NEURAL NETWORK")
 }
 
 // Utility Functions

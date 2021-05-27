@@ -99,6 +99,16 @@ export default class TextClassifier {
         this.#brain.train(this.#prepareTrainingData(trainingData), this.#cleanOptions(options));
     }
 
+    export() {
+        const json = {
+            "brain": this.#brain.toJSON(),
+            "dictionary": this.modelDictionary,
+            "blacklist": this.dictionaryBlacklist,
+            "history": this.trainingHistory
+        }
+        return json;
+    }
+
     /**
      * Add new history to the current history by updating any pre-existing inputs with their new output and removing duplicates
      * @method
@@ -124,9 +134,7 @@ export default class TextClassifier {
         console.log("Stems", stems);
         const blacklistArr = this.dictionaryBlacklist
         const filteredStems = stems.filter(stem => {
-            if(blacklistArr.indexOf(stem) == -1){
-                return true;
-            }
+            if(blacklistArr.indexOf(stem) == -1){return true;}
             return false;
         });
         console.log("Filtered", filteredStems);
@@ -155,6 +163,12 @@ export default class TextClassifier {
         this.#modelDictionary =  countedStems;
     }
 
+    /**
+     * 
+     * @param {Array} raw An array of objects containing input strings and output category
+     * @returns {Array} An array of objects that have been prepared to be consumed by the Neural Network
+     * @example {input: [0,0,1,1,0,1,0], output: {Category: 1}}
+     */
     #prepareTrainingData(raw){
         const preparedData = raw.map(data => {
             const obj = {};
@@ -164,12 +178,25 @@ export default class TextClassifier {
         return preparedData;
     }
 
+    /**
+     * 
+     * @param {String} input A string to be encoded with the current dictionary
+     * @returns an encoded string
+     * @example
+     * dictionary = ["this", "test", "training", "object", "a", "technique", "is"]
+     * encodeInput("this is a test") //returns [1, 1, 0, 0, 1, 0, 1]
+     */
     #encodeInput(input){
         const phraseTokens = input.split(' ').map(word => stemmer(word))
         const encodedPhrase = this.modelDictionary.map(word => phraseTokens.includes(word.stem) ? 1 : 0)
         return encodedPhrase
     }
 
+    /**
+     * This function will clean all inputs
+     * @param {Object} options Options to be passed to the brainJS train method.
+     * @returns an object with clamped and cleaned inputs
+     */
     #cleanOptions(options){
         const cleaned = {
             iterations: this.#clamp(options.iterations, 1, Infinity),
@@ -183,6 +210,13 @@ export default class TextClassifier {
         return cleaned;
     }
 
+    /**
+     * 
+     * @param {float} val the value to be clamped
+     * @param {float} min the maximum the value can be
+     * @param {float} max the minimum the value can be
+     * @returns the clamped value
+     */
     #clamp(val, min, max) {
         return Math.min(Math.max(val, min), max);
     }
