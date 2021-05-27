@@ -99,7 +99,15 @@ export default class TextClassifier {
         this.#brain.train(this.#prepareTrainingData(trainingData), this.#cleanOptions(options));
     }
 
-    export() {
+    classify(){
+
+    }
+
+    classifyAll(){
+        
+    }
+
+    export(){
         const json = {
             "brain": this.#brain.toJSON(),
             "dictionary": this.modelDictionary,

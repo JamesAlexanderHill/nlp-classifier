@@ -30,15 +30,15 @@ function loadModel() {
     }
     var reader = new FileReader();
     reader.onload = (event) => {
-        const {NN, dictionary, blacklist, history} = JSON.parse(event.target.result);
-        if(!NN || !dictionary || !blacklist || !history){
+        const {brain, dictionary, blacklist, history} = JSON.parse(event.target.result);
+        if(!brain || !dictionary || !blacklist || !history){
             // toast.push({type: "error", message: "Your imported model is invalid"});
             console.log("ERROR: Your imported model is invalid")
             document.getElementById("loadModel").value = '';
             return;
         }
         console.log("LOADING NEURAL NETWORK...");
-        nlp = new TextClassifier(NN, dictionary, blacklist, history);
+        nlp = new TextClassifier(brain, dictionary, blacklist, history);
         // toast.push({type: "alert", message: "File Loaded! Start classifying!"});
         console.log("NEURAL NETWORK LOADED")
     };
@@ -97,16 +97,4 @@ const getOptions = () => {
         timeout: parseInt(document.getElementById('option_timeout').value),
     };
     return obj;
-}
-const classifyString = (string) => {
-    if(NN == null){
-        console.log("ERROR: You need to create or load a Neural Network before you can classify a string");
-        return;
-    }
-    // console.log("CLASSIFYING STRING...");
-    const es = encodeInput(string);
-    const output = NN.run(es);
-    // console.log(`${string} => ${output}`)
-    // console.log("output => ", string, es, output);v
-    return output;
 }
