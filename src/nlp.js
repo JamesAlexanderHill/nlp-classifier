@@ -90,21 +90,43 @@ export default class TextClassifier {
      * }
      */
     train(trainingData, options){
-        console.log(trainingData, options);
+        // console.log(trainingData, options);
         // add new training data to history (overwrite any duplicate inputs with new outputs)
         this.#addHistory(trainingData);
+        console.log(this.trainingHistory ,options)
         // create dictionary from history
         this.#createDictionary();
         // train
         this.#brain.train(this.#prepareTrainingData(trainingData), this.#cleanOptions(options));
     }
 
-    classify(){
-
+    classify(input){
+        const es = this.#encodeInput(input);
+        const output = this.#brain.run(es);
+        // console.log(input, output)
+        return output;
     }
 
-    classifyAll(){
-        
+    classifyAll(inputs){
+        // console.log(inputs)
+        const classifiedInputs = inputs.map(obj => {
+            const output = this.classify(obj.input);
+            for (const [key, value] of Object.entries(output)) {
+                if(obj.output == null){
+                    obj.output = key;
+                    obj.certainty = value;
+                }else{
+                    if(obj.certainty < value){
+                        obj.output = key;
+                        obj.certainty = value;
+                    }
+                }
+            }
+            obj.certainty = (obj.certainty*100).toFixed(2);
+            return obj;
+        });
+        // console.log("classifiedInputs = ", classifiedInputs)
+        return classifiedInputs;
     }
 
     export(){
@@ -137,15 +159,15 @@ export default class TextClassifier {
     #createDictionary(){
         // const words = [].concat.apply([], this.trainingHistory.map(history => history.input.split(' ')));
         const words = this.trainingHistory.map(history => history.input.split(' ')).flat();
-        console.log("Words", words);
+        // console.log("Words", words);
         const stems = words.map(word => stemmer(word));
-        console.log("Stems", stems);
+        // console.log("Stems", stems);
         const blacklistArr = this.dictionaryBlacklist
         const filteredStems = stems.filter(stem => {
             if(blacklistArr.indexOf(stem) == -1){return true;}
             return false;
         });
-        console.log("Filtered", filteredStems);
+        // console.log("Filtered", filteredStems);
         //convert to an array of objects eg. [{stem: "am", count: 3}, {stem: "test", count: 2}, ...]
         const countedStems = filteredStems.reduce((arr, item) => {
             const index = arr.findIndex((element) => {
@@ -164,7 +186,7 @@ export default class TextClassifier {
             if(a.count > b.count){return -1}
             return 0;
         })
-        console.log("Counted", countedStems);
+        // console.log("Counted", countedStems);
 
         // const trimmedStems;
 

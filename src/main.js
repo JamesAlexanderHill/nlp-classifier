@@ -52,6 +52,11 @@ function trainModel(){
         document.getElementById("trainModel").value = '';
         return;
     }
+    if(nlp == null){
+        // toast.push({type: "error", message: "You need to create or load a Neural Network before you can classify a string"});
+        console.log("ERROR: You need to create or load a Neural Network before you can train it")
+        return;
+    }
     Papa.parse(this.files[0], {
         header: true,
         complete: (results) => {
@@ -62,8 +67,64 @@ function trainModel(){
     });
 }
 function classifyCSV(){
+    if(nlp == null){
+        console.log("ERROR: You need to create a Neural Network before you can classify a CSV")
+        document.getElementById("classifyCSV").value = '';
+        return;
+    }
+    if(nlp.modelDictionary.length <= 0){
+        console.log("ERROR: You cannot classify a CSV with an untrained Neural Network. Load or train a Neural Network")
+        document.getElementById("classifyCSV").value = '';
+        return;
+    }
+    const fileList = this.files;
+    if(fileList.length < 1){
+        console.log("ERROR: You need to import a CSV file(inputs)")
+        document.getElementById("classifyCSV").value = '';
+        return;
+    }
+    Papa.parse(this.files[0], {
+        header: true,
+        complete: (results) => {
+            console.log("CLASSIFYING CSV...")
+            const inputs = results.data;
+            const classifiedJSON = nlp.classifyAll(inputs);
+            console.log("CLASSIFIED CSV")
+
+            console.log("EXPORTING CLASSIFIED FILE...");
+            const file = Papa.unparse(classifiedJSON, {
+                delimiter: ",",
+                newline: "\n",
+                quoteChar: '"',
+                header: true,
+                encoding: "UTF-8"
+            });
+            const date = new Date();
+            const name = `classified_${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}_${date.getHours()}-${date.getMinutes()}.csv`;
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([file], {type: "text/csv;charset=utf-8;"}));
+            a.setAttribute("download", name);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            console.log("EXPORTED CLASSIFIED FILE");
+            document.getElementById("classifyCSV").value = '';
+        }
+    });
 }
 const classifyInput = () => {
+    if(nlp == null){
+        // toast.push({type: "error", message: "You need to create or load a Neural Network before you can classify a string"});
+        console.log("ERROR: You need to create or load a Neural Network before you can classify a string")
+        return;
+    }
+    if(nlp.modelDictionary.length <= 0){
+        console.log("ERROR: You cannot classify a CSV with an untrained Neural Network. Load or train a Neural Network")
+        return;
+    }
+    console.log("CLASSIFYING STRING...");
+    const input = document.getElementById('classifyStringInput').value;
+    console.log("CLASSIFIED STRING =>", nlp.classify(input));
 }
 const exportModel = () => {
     if(nlp == null){
